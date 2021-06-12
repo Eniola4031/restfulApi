@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller as Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\Http\Resources\UserResource;
+
 
 
 class RegisterController extends Controller
