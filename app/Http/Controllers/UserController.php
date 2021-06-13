@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Controller;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use App\Http\Controllers\Controller as Controller;
 use App\Http\Resources\UserResource;
-
-
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -87,8 +87,14 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
+        $user = auth()->user();
+        $request->validate([
+            'name' => 'required',
+            'email' => ['required', Rule::unique(User::class, 'email')->ignore($user->id)]
+        ]);
+
         $user->update($request->all());
 
         return response(['user' => new UserResource($user), 'message' => 'Updated successfully'], 200);
@@ -101,8 +107,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy()
     {
+        $user = auth()->user();
         $user->delete();
 
         return response(['message' => 'Deleted']);
